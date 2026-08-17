@@ -32,7 +32,7 @@ export function NotificationToast() {
 
   function handleOpen() {
     setVisible(false);
-    router.push("/notifications");
+    router.push("/jobs-placements");
   }
 
   return (
