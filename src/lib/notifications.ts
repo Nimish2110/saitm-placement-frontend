@@ -3,12 +3,20 @@
 import { create } from "zustand";
 import { api, ApiRequestError } from "./api";
 
+export interface DriveJDFile {
+  id: string;
+  file: string;
+  original_filename: string;
+  uploaded_at: string;
+}
+
 export interface Drive {
   id: string;
   drive_type: string;
   company_name: string;
   company_website: string;
   jd_text: string;
+  jd_files: DriveJDFile[];
   profiles_offered: string[];
   job_location: string;
   eligible_courses: string[];

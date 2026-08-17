@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/Pill";
 import { Modal } from "@/components/ui/Modal";
 import { useDriveStore, Drive } from "@/lib/notifications";
 import { ApplicationFormModal } from "@/components/student/ApplicationFormModal";
+import { JDFileList } from "@/components/placements/JDFileList";
 import { Briefcase, ChevronDown, ChevronUp, CheckCircle2, StickyNote } from "lucide-react";
 
 export default function JobsPlacementsPage() {
@@ -97,6 +98,9 @@ export default function JobsPlacementsPage() {
                       <Button type="button" size="sm" variant="outline" onClick={() => setJdModalDrive(d)}>Open JD</Button>
                       </div>
                       )}
+
+                      <JDFileList files={d.jd_files} />
+
                       <DetailRow label="Profile(s) Offered" value={d.profiles_offered.join(", ")} />
                       <DetailRow label="Job Location" value={d.job_location} />
                       <DetailRow label="CTC" value={d.ctc} />

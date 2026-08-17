@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { Info, X } from "lucide-react";
 import { api, ApiRequestError } from "@/lib/api";
 import { courseOptions } from "@/lib/students";
 import { STATE_CITY_MAP, stateOptions } from "@/lib/locations";
+import { JDFileUpload, JDFileUploadHandle } from "@/components/placements/JDFileUpload";
 
 const driveTypeOptions = ["Final Placement", "Internship", "Pre-Placement Offer (PPO)"];
 
@@ -41,6 +42,7 @@ export default function DriveCreationPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const jdUploadRef = useRef<JDFileUploadHandle>(null);
 
   const [driveTypes, setDriveTypes] = useState<string[]>([]);
   const [companyName, setCompanyName] = useState("");
@@ -103,7 +105,7 @@ export default function DriveCreationPage() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      await api("/api/drives/", {
+      const created = await api<{ id: string }>("/api/drives/", {
         method: "POST",
         body: JSON.stringify({
           drive_type: driveTypeLabel,
@@ -121,6 +123,11 @@ export default function DriveCreationPage() {
           pm_note: pmNote,
         }),
       });
+
+      if (jdUploadRef.current) {
+        await jdUploadRef.current.uploadNow(created.id);
+      }
+
       router.push("/pm/drives-floated");
     } catch (err) {
       setError(err instanceof ApiRequestError ? Object.values(err.body).flat().join(" ") || "Could not publish drive" : "Could not reach the server");
@@ -170,6 +177,10 @@ export default function DriveCreationPage() {
               {jdText ? "Edit Job Description ✓" : "+ Add Job Description"}
             </Button>
             {jdText && <p className="text-[11px] text-muted mt-1.5">{jdText.length} characters written</p>}
+          </div>
+
+          <div className="mb-4">
+            <JDFileUpload ref={jdUploadRef} />
           </div>
 
           <SectionTitle>Role Details</SectionTitle>
