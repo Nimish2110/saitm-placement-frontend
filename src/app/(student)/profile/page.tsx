@@ -354,7 +354,8 @@ function SelectField({ label, value, onChange, options, required = false }: { la
     <div>
       <label className="block text-xs font-semibold text-ink-2 mb-1.5">{label} {required && <span className="text-danger">*</span>}</label>
       <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm">
-        {options.map((o) => <option key={o}>{o}</option>)}
+        {!value && <option value="">-- Select --</option>}
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </div>
   );
