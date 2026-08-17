@@ -97,7 +97,10 @@ export default function DriveCreationPage() {
   }
   if (showPlacementCtc) {
     const part = formatCtcSection(placementCtc);
-    if (part) ctcParts.push(`Pre-Placement: ${part}`);
+    if (part) {
+      const label = driveTypes.includes("Pre-Placement Offer (PPO)") ? "Pre Placement Offer" : "Final Placement";
+      ctcParts.push(`${label}: ${part}`);
+    }
   }
   const combinedCtc = ctcParts.join(" | ");
 
