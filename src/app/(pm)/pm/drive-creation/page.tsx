@@ -118,7 +118,7 @@ export default function DriveCreationPage() {
           eligible_batches: batches,
           ctc: combinedCtc,
           process_details: process,
-          last_date_of_application: deadline ? new Date(deadline).toISOString() : null,
+          last_date_of_application: deadline ? new Date(`${deadline}T23:59:59`).toISOString() : null,
           company_link: companyLink,
           pm_note: pmNote,
         }),
@@ -281,8 +281,7 @@ export default function DriveCreationPage() {
           </div>
           <div className="mb-4">
             <label className="block text-xs font-semibold text-ink-2 mb-1.5">Last Date of Application</label>
-            <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm" />
-          </div>
+            <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm" />          </div>
           <div className="mb-4">
             <label className="block text-xs font-semibold text-ink-2 mb-1.5">Company Link <span className="text-muted-2 font-normal">(optional — only if the company needs students to also register on their own portal)</span></label>
             <input
