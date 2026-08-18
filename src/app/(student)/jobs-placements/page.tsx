@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { useDriveStore, Drive } from "@/lib/notifications";
 import { ApplicationFormModal } from "@/components/student/ApplicationFormModal";
 import { JDFileList } from "@/components/placements/JDFileList";
-import { Briefcase, ChevronDown, ChevronUp, CheckCircle2, StickyNote } from "lucide-react";
+import { Briefcase, ChevronDown, ChevronUp, CheckCircle2, StickyNote, Calendar, Clock, FileText } from "lucide-react";
 
 export default function JobsPlacementsPage() {
   const { drives, loading, error, appliedDriveIds, fetchDrives, fetchMyApplications } = useDriveStore();
@@ -40,25 +40,34 @@ export default function JobsPlacementsPage() {
             return (
               <Card key={d.id} className="p-0 overflow-hidden">
                 <div className="p-5">
-                  <div className="flex items-start gap-3.5 mb-3">
-                    <div className="w-10 h-10 rounded-[10px] bg-primary-50 text-primary grid place-items-center flex-shrink-0">
-                      <Briefcase size={18} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <h3 className="text-[15px] font-bold">{d.company_name}</h3>
-                        <Pill color="info">{d.drive_type}</Pill>
-                        {applied && <Pill color="success"><CheckCircle2 size={11} className="inline mr-1" />Applied</Pill>}
-                        {!d.is_eligible && !applied && <Pill color="neutral">Not for your course/batch</Pill>}
+                  <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
+                    <div className="flex items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-[10px] bg-primary-50 text-primary grid place-items-center flex-shrink-0">
+                        <Briefcase size={18} />
                       </div>
-                      <p className="text-[12.5px] text-muted">{d.profiles_offered.join(" · ")}</p>
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                          <h3 className="text-lg font-bold">{d.company_name}</h3>
+                          <Pill color="info">{d.drive_type}</Pill>
+                          {applied && <Pill color="success"><CheckCircle2 size={11} className="inline mr-1" />Applied</Pill>}
+                          {!d.is_eligible && !applied && <Pill color="neutral">Not for your course/batch</Pill>}
+                        </div>
+                        <p className="text-[11.5px] text-muted">
+                          <span className="font-semibold text-ink-2">Role Offered:</span> {d.profiles_offered.join(", ")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right text-[12px] flex-shrink-0">
+                      <div className="flex items-center justify-end gap-1.5 font-bold text-danger">
+                        <Clock size={12} />
+                        Closes {new Date(d.last_date_of_application).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" })}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-[12px] text-muted mb-3">
-                    <span>📍 {d.job_location}</span>
-                    <span>💰 {d.ctc}</span>
-                    <span>⏰ Closes {new Date(d.last_date_of_application).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <MiniStat label="CTC" value={d.ctc} />
+                    <MiniStat label="Location" value={d.job_location} />
                   </div>
 
                   {!d.is_eligible && !applied && (
@@ -93,21 +102,42 @@ export default function JobsPlacementsPage() {
                       <DetailRow label="Company Name" value={d.company_name} />
                       <DetailRow label="Company Website" value={d.company_website} link />
                       {d.jd_text && (
-                      <div className="flex justify-between items-center gap-4 py-2 text-[12.5px] border-b border-border-soft">
-                      <span className="text-muted">Job Description</span>
-                      <Button type="button" size="sm" variant="outline" onClick={() => setJdModalDrive(d)}>Open JD</Button>
-                      </div>
+                        <div className="flex justify-between items-center gap-4 py-2 text-[12.5px] border-b border-border-soft">
+                          <span className="text-muted">Job Description</span>
+                          <Button type="button" size="sm" variant="outline" onClick={() => setJdModalDrive(d)}>Open JD</Button>
+                        </div>
                       )}
 
-                      <JDFileList files={d.jd_files} />
+                      {d.jd_files && d.jd_files.length > 0 && (
+                        <div className="py-3 border-b border-border-soft">
+                          <span className="text-muted text-[12.5px] flex items-center gap-1.5 mb-2">
+                            <FileText size={13} /> Job Description Files
+                          </span>
+                          <JDFileList files={d.jd_files} />
+                        </div>
+                      )}
 
                       <DetailRow label="Profile(s) Offered" value={d.profiles_offered.join(", ")} />
-                      <DetailRow label="Job Location" value={d.job_location} />
                       <DetailRow label="CTC" value={d.ctc} />
                       <DetailRow label="Process" value={d.process_details} />
-                      <DetailRow label="Eligible Courses" value={d.eligible_courses.join(", ")} />
-                      <DetailRow label="Eligible Batches" value={d.eligible_batches.join(", ")} />
-                      <DetailRow label="Last Date of Application" value={new Date(d.last_date_of_application).toLocaleString("en-IN")} last={!d.pm_note && !d.company_link} />
+
+                      <div className="py-2.5 border-b border-border-soft">
+                        <span className="text-[10.5px] font-semibold text-muted uppercase tracking-wide">Eligible Courses</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                          {d.eligible_courses.map((c) => <Pill key={c} color="neutral">{c}</Pill>)}
+                        </div>
+                      </div>
+                      <div className="py-2.5 border-b border-border-soft">
+                        <span className="text-[10.5px] font-semibold text-muted uppercase tracking-wide">Eligible Batches</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5">
+                          {d.eligible_batches.map((b) => <Pill key={b} color="primary">Batch {b}</Pill>)}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-4 py-2.5 text-[12.5px]">
+                        <span className="text-muted flex items-center gap-1.5"><Calendar size={12} /> Last Date of Application</span>
+                        <span className="font-bold text-danger">{new Date(d.last_date_of_application).toLocaleString("en-IN")}</span>
+                      </div>
 
                       {d.company_link && (
                         <DetailRow label="Company Portal (also required)" value={d.company_link} link last={!d.pm_note} />
@@ -143,11 +173,11 @@ export default function JobsPlacementsPage() {
       )}
 
       <ApplicationFormModal drive={applyDrive} open={!!applyDrive} onClose={() => setApplyDrive(null)} />
-        <Modal open={!!jdModalDrive} onClose={() => setJdModalDrive(null)} title={`Job Description — ${jdModalDrive?.company_name ?? ""}`} width={640}>
+      <Modal open={!!jdModalDrive} onClose={() => setJdModalDrive(null)} title={`Job Description — ${jdModalDrive?.company_name ?? ""}`} width={640}>
         <textarea
-        readOnly
-        value={jdModalDrive?.jd_text ?? ""}
-        className="w-full h-80 p-3.5 rounded-[10px] border border-border text-sm font-mono bg-surface-2 resize-none"
+          readOnly
+          value={jdModalDrive?.jd_text ?? ""}
+          className="w-full h-80 p-3.5 rounded-[10px] border border-border text-sm font-mono bg-surface-2 resize-none"
         />
       </Modal>
     </div>
@@ -163,6 +193,15 @@ function DetailRow({ label, value, link = false, linkLabel, last = false }: { la
       ) : (
         <span className="font-medium text-right">{value}</span>
       )}
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-surface-2 rounded-[10px] p-3">
+      <div className="text-[10px] text-muted uppercase tracking-wide mb-0.5">{label}</div>
+      <div className="text-[13px] font-semibold">{value}</div>
     </div>
   );
 }

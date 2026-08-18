@@ -89,8 +89,9 @@ export const useDriveStore = create<DriveStore>((set) => ({
       return { ok: true, message: "Application submitted successfully." };
     } catch (e) {
       if (e instanceof ApiRequestError) {
+                const detail = Array.isArray(e.body.detail) ? e.body.detail.join(" ") : e.body.detail;
         const message =
-          e.body.detail ||
+          detail ||
           Object.entries(e.body)
             .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(" ") : val}`)
             .join(" | ");
