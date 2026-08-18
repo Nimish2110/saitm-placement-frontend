@@ -133,7 +133,7 @@ export default function DriveCreationPage() {
 
       router.push("/pm/drives-floated");
     } catch (err) {
-      setError(err instanceof ApiRequestError ? Object.values(err.body).flat().join(" ") || "Could not publish drive" : "Could not reach the server");
+      setError(err instanceof ApiRequestError ? Object.values(err.body).flat().join(" ") || "Could not submit drive" : "Could not reach the server");
     } finally {
       setLoading(false);
     }
@@ -143,7 +143,7 @@ export default function DriveCreationPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Create Drive</h1>
-        <p className="text-[13px] text-muted mt-1">Publish a placement drive — students apply directly on the portal; eligible students also get email + WhatsApp</p>
+        <p className="text-[13px] text-muted mt-1">Submit a placement drive for Admin review — it goes live to students only after approval</p>
       </div>
 
       <Card className="max-w-[820px]">
@@ -166,7 +166,7 @@ export default function DriveCreationPage() {
                 </button>
               ))}
             </div>
-            {driveTypeLabel && <p className="text-[11px] text-muted mt-2">Will be published as: <strong className="text-ink">{driveTypeLabel}</strong></p>}
+            {driveTypeLabel && <p className="text-[11px] text-muted mt-2">Will be submitted as: <strong className="text-ink">{driveTypeLabel}</strong></p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-4">
@@ -229,7 +229,7 @@ export default function DriveCreationPage() {
 
           <div className="mb-5">
             <label className="block text-xs font-semibold text-ink-2 mb-2">
-              CTC {combinedCtc && <span className="text-muted-2 font-normal">— will publish as: <strong className="text-ink">{combinedCtc}</strong></span>}
+              CTC {combinedCtc && <span className="text-muted-2 font-normal">— will submit as: <strong className="text-ink">{combinedCtc}</strong></span>}
             </label>
             {!showInternshipCtc && !showPlacementCtc && (
               <p className="text-xs text-muted bg-surface-2 rounded-lg px-3 py-2.5">Select a Type of Drive above (Internship and/or Final Placement / PPO) to enter CTC details.</p>
@@ -284,7 +284,8 @@ export default function DriveCreationPage() {
           </div>
           <div className="mb-4">
             <label className="block text-xs font-semibold text-ink-2 mb-1.5">Last Date of Application</label>
-            <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm" />          </div>
+            <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm" />
+          </div>
           <div className="mb-4">
             <label className="block text-xs font-semibold text-ink-2 mb-1.5">Company Link <span className="text-muted-2 font-normal">(optional — only if the company needs students to also register on their own portal)</span></label>
             <input
@@ -309,13 +310,13 @@ export default function DriveCreationPage() {
 
           <div className="flex gap-2.5 bg-info-50 border border-blue-200 rounded-[10px] p-3.5 text-[12px] text-[#1E40AF] mb-5">
             <Info size={16} className="flex-shrink-0 mt-0.5" />
-            <span>Students apply directly on the portal via an in-app form — no external Google Form needed anymore. Publishing sends this drive to every student whose course and batch match your selections — no one else.</span>
+            <span>This drive will be sent to Admin for review first. Once Admin approves it, it goes live on the portal and every eligible student is notified automatically — you&apos;ll see its status on Drives Floated.</span>
           </div>
 
           {error && <p className="text-xs text-danger mb-3">{error}</p>}
 
           <div className="flex justify-end gap-2">
-            <Button type="submit" disabled={loading}>{loading ? "Publishing..." : "Publish drive"}</Button>
+            <Button type="submit" disabled={loading}>{loading ? "Submitting..." : "Submit for Approval"}</Button>
           </div>
         </form>
       </Card>

@@ -4,10 +4,11 @@ import { AuthGuard } from "@/components/layout/AuthGuard";
 import { Header } from "@/components/layout/Header";
 import { Sidebar, NavItem } from "@/components/layout/Sidebar";
 import { adminAuth } from "@/lib/auth";
-import { Users, Megaphone, GraduationCap } from "lucide-react";
+import { Users, Megaphone, GraduationCap, ClipboardCheck } from "lucide-react";
 
 const nav: NavItem[] = [
   { href: "/admin/pm-database", label: "PM Database", icon: Users },
+  { href: "/admin/drive-approvals", label: "Drive Approvals", icon: ClipboardCheck },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
   { href: "/admin/students", label: "Student Database", icon: GraduationCap },
 ];
