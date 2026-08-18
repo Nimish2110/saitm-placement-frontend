@@ -4,12 +4,11 @@ import { AuthGuard } from "@/components/layout/AuthGuard";
 import { Header } from "@/components/layout/Header";
 import { Sidebar, NavItem } from "@/components/layout/Sidebar";
 import { pmAuth } from "@/lib/auth";
-import { GraduationCap, FilePlus2, ListChecks, ClipboardCheck, UserCircle, Megaphone, FileEdit } from "lucide-react";
+import { GraduationCap, FilePlus2, ListChecks, UserCircle, Megaphone, FileEdit } from "lucide-react";
 
 const nav: NavItem[] = [
   { href: "/pm/students", label: "Student Database", icon: GraduationCap },
   { href: "/pm/drive-creation", label: "Drive Creation", icon: FilePlus2 },
-  { href: "/pm/students-applied", label: "Students Applied", icon: ClipboardCheck },
   { href: "/pm/drives-floated", label: "Drives Floated", icon: ListChecks },
   { href: "/pm/resume-formats", label: "Resume Formats", icon: FileEdit },
   { href: "/pm/announcements", label: "Announcements", icon: Megaphone },

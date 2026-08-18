@@ -30,6 +30,7 @@ export interface Drive {
   posted_on: string;
   status: "open" | "closed";
   is_eligible: boolean;
+  applications_count: number;
 }
 
 export interface Application {
