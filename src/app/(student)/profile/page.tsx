@@ -18,6 +18,7 @@ const MAX_DOCS_BY_TYPE: Record<DocType, number> = {
   aadhar: 1,
   tenth_marksheet: 1,
   twelfth_marksheet: 1,
+  certificate: 10,
 };
 const docTypes: DocType[] = ["resume", "aadhar", "tenth_marksheet", "twelfth_marksheet"];
 
@@ -171,7 +172,7 @@ export default function ProfilePage() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`px-4 py-2 rounded-lg text-[13px] font-medium whitespace-nowrap transition-colors ${
-                  tab === t ? (t === "Logout" ? "bg-danger text-white font-semibold" : "bg-primary text-white font-semibold") : "text-muted hover:bg-surface-2"
+                  tab === t ? "bg-primary text-white font-semibold" : "text-muted hover:bg-surface-2"
                 }`}
               >
                 {t}
@@ -184,9 +185,9 @@ export default function ProfilePage() {
               <CardHead title="Personal information" />
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Full name" required value={profile.full_name} onChange={(v) => setProfile({ ...profile, full_name: v })} />
-                <Field label="Phone number" required value={profile.phone} onChange={(v) => setProfile({ ...profile, phone: v })} />
-                <Field label="Official email" required value={profile.college_email} onChange={(v) => setProfile({ ...profile, college_email: v })} />
-                <Field label="Personal email" required value={profile.personal_email} onChange={(v) => setProfile({ ...profile, personal_email: v })} />
+                <Field label="Phone" required value={profile.phone} onChange={(v) => setProfile({ ...profile, phone: v })} />
+                <Field label="College email" value={profile.college_email} onChange={(v) => setProfile({ ...profile, college_email: v })} />
+                <Field label="Personal email" value={profile.personal_email} onChange={(v) => setProfile({ ...profile, personal_email: v })} />
                 <Field label="LinkedIn" value={profile.linkedin} onChange={(v) => setProfile({ ...profile, linkedin: v })} placeholder="linkedin.com/in/..." />
                 <Field label="GitHub" value={profile.github} onChange={(v) => setProfile({ ...profile, github: v })} placeholder="github.com/..." />
                 <div className="col-span-2"><Field label="Home address" value={profile.home_address} onChange={(v) => setProfile({ ...profile, home_address: v })} /></div>
@@ -221,6 +222,11 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-xs font-semibold text-ink-2 mb-1.5">Certifications</label>
                   <textarea value={profile.certifications} onChange={(e) => setProfile({ ...profile, certifications: e.target.value })} className="w-full h-20 px-3.5 py-2.5 rounded-[10px] border border-border text-sm" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-ink-2 mb-1.5">Upload certificates / proof (images or PDF)</label>
+                  <p className="text-[11px] text-muted mb-2.5">Upload up to 10 files — hackathon certificates, internship letters, competition proofs, etc.</p>
+                  <DocumentSection docType="certificate" />
                 </div>
               </div>
             </Card>
@@ -286,7 +292,8 @@ function DocumentSection({ docType }: { docType: DocType }) {
       await uploadDocument(docType, file);
       load();
     } catch (err) {
-      setError(err instanceof ApiRequestError ? err.body.detail || "Upload failed" : "Could not reach the server");
+      const detail = err instanceof ApiRequestError ? err.body.detail : null;
+      setError(Array.isArray(detail) ? detail.join(" ") : detail || (err instanceof ApiRequestError ? "Upload failed" : "Could not reach the server"));
     } finally {
       setUploading(false);
     }

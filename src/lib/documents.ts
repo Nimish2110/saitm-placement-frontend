@@ -1,6 +1,6 @@
 import { api } from "./api";
 
-export type DocType = "resume" | "aadhar" | "tenth_marksheet" | "twelfth_marksheet";
+export type DocType = "resume" | "aadhar" | "tenth_marksheet" | "twelfth_marksheet" | "certificate";
 
 export interface StudentDocument {
   id: string;
@@ -30,6 +30,7 @@ export const DOC_TYPE_LABELS: Record<DocType, string> = {
   aadhar: "Aadhar Card",
   tenth_marksheet: "10th Marksheet",
   twelfth_marksheet: "12th Marksheet",
+  certificate: "Certificate",
 };
 
 export interface MyPhotoResponse {
