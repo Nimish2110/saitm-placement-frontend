@@ -69,9 +69,6 @@ export default function PMLoginPage() {
       <p className="text-center text-[13px] text-muted mt-6">
         New Placement Manager? <Link href="/pm-register" className="text-primary font-semibold">Register</Link>
       </p>
-      <p className="text-center text-[12px] text-muted-2 mt-3">
-        Student? <Link href="/login" className="text-primary font-semibold">Login here</Link>
-      </p>
     </div>
   );
 }
