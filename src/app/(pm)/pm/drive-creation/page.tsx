@@ -21,6 +21,11 @@ interface CtcState {
   max: string;
 }
 
+interface LocationEntry {
+  city: string;
+  state: string;
+}
+
 const emptyInternshipCtc: CtcState = { mode: "fixed", unit: "Thousand", fixed: "", min: "", max: "" };
 const emptyPlacementCtc: CtcState = { mode: "fixed", unit: "Lakh", fixed: "", min: "", max: "" };
 
@@ -52,8 +57,7 @@ export default function DriveCreationPage() {
   const [jdText, setJdText] = useState("");
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
+  const [locations, setLocations] = useState<LocationEntry[]>([{ city: "", state: "" }]);
 
   const [courses, setCourses] = useState<string[]>([]);
 
@@ -84,8 +88,22 @@ export default function DriveCreationPage() {
     setBatches(batches.filter((b) => b !== val));
   }
 
+  function updateLocation(index: number, field: "city" | "state", value: string) {
+    setLocations((prev) => prev.map((loc, i) => (i === index ? { ...loc, [field]: value } : loc)));
+  }
+  function addLocationRow() {
+    setLocations((prev) => [...prev, { city: "", state: "" }]);
+  }
+  function removeLocationRow(index: number) {
+    setLocations((prev) => prev.filter((_, i) => i !== index));
+  }
+
   const driveTypeLabel = driveTypes.length > 0 ? driveTypes.join(" + ") : "";
-  const jobLocation = state && city ? `${city}, ${state}` : state || "";
+  const allCityOptions = Array.from(new Set(Object.values(STATE_CITY_MAP).flat()));
+  const jobLocation = locations
+    .filter((l) => l.city.trim())
+    .map((l) => (l.state.trim() ? `${l.city.trim()}, ${l.state.trim()}` : l.city.trim()))
+    .join("; ");
 
   const showInternshipCtc = driveTypes.includes("Internship");
   const showPlacementCtc = driveTypes.includes("Final Placement") || driveTypes.includes("Pre-Placement Offer (PPO)");
@@ -197,34 +215,48 @@ export default function DriveCreationPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-xs font-semibold text-ink-2 mb-1.5">State</label>
-              <input
-                list="state-options"
-                value={state}
-                onChange={(e) => { setState(e.target.value); setCity(""); }}
-                placeholder="Type or select a state..."
-                className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm focus:outline-none focus:border-primary"
-              />
-              <datalist id="state-options">
-                {stateOptions.map((s) => <option key={s} value={s} />)}
-              </datalist>
+          <div className="mb-4">
+            <label className="block text-xs font-semibold text-ink-2 mb-2">
+              Job Location(s) <span className="text-muted-2 font-normal">— add one per office; State is optional</span>
+            </label>
+            <div className="space-y-2.5">
+              {locations.map((loc, i) => (
+                <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2.5">
+                  <input
+                    list="all-city-options"
+                    value={loc.city}
+                    onChange={(e) => updateLocation(i, "city", e.target.value)}
+                    placeholder="City (e.g. Gurugram, Remote, Pan India)"
+                    className="h-10 px-3.5 rounded-[10px] border border-border text-sm focus:outline-none focus:border-primary"
+                  />
+                  <input
+                    list="state-options"
+                    value={loc.state}
+                    onChange={(e) => updateLocation(i, "state", e.target.value)}
+                    placeholder="State (optional)"
+                    className="h-10 px-3.5 rounded-[10px] border border-border text-sm focus:outline-none focus:border-primary"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeLocationRow(i)}
+                    disabled={locations.length === 1}
+                    className="h-10 w-10 rounded-[10px] border border-border text-muted hover:text-danger hover:border-red-200 disabled:opacity-30 flex-shrink-0 grid place-items-center"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+              ))}
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-ink-2 mb-1.5">City</label>
-              <input
-                list="city-options"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                disabled={!STATE_CITY_MAP[state]}
-                placeholder={STATE_CITY_MAP[state] ? "Type or select a city..." : "Select a valid state first"}
-                className="w-full h-10 px-3.5 rounded-[10px] border border-border text-sm focus:outline-none focus:border-primary disabled:bg-surface-2 disabled:text-muted"
-              />
-              <datalist id="city-options">
-                {STATE_CITY_MAP[state]?.map((c) => <option key={c} value={c} />)}
-              </datalist>
-            </div>
+            <datalist id="all-city-options">
+              {allCityOptions.map((c) => <option key={c} value={c} />)}
+            </datalist>
+            <datalist id="state-options">
+              {stateOptions.map((s) => <option key={s} value={s} />)}
+            </datalist>
+            <Button type="button" variant="outline" onClick={addLocationRow} className="mt-2.5">
+              + Add another location
+            </Button>
+            {jobLocation && <p className="text-[11px] text-muted mt-2">Will publish as: <strong className="text-ink">{jobLocation}</strong></p>}
           </div>
 
           <div className="mb-5">
