@@ -62,6 +62,17 @@ export interface ResumeDraftSummary {
   updated_at: string;
 }
 
+export interface ResumeFormat {
+  id: string;
+  name: string;
+  description: string;
+  style_tag: string;
+  file: string;
+  original_filename: string;
+  uploaded_by_name: string;
+  created_at: string;
+}
+
 export function fetchPrefillData(): Promise<ResumeData> {
   return api<ResumeData>("/api/students/resumes/prefill/");
 }
@@ -107,6 +118,10 @@ async function downloadResumeFile(url: string, filename: string) {
   link.download = filename;
   link.click();
   URL.revokeObjectURL(objectUrl);
+}
+
+export function fetchResumeFormats(): Promise<ResumeFormat[]> {
+  return api<ResumeFormat[]>("/api/resume-formats/");
 }
 
 export function downloadResumePDF(id: string, name: string) {

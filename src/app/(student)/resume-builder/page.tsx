@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
-import { fetchResumeDrafts, fetchPrefillData, createResumeDraft, deleteResumeDraft, ResumeDraftSummary } from "@/lib/resumes";
-import { UserCircle2, FolderOpen, FileText, Trash2, Sparkles, ExternalLink } from "lucide-react";
+import { fetchResumeDrafts, fetchPrefillData, createResumeDraft, deleteResumeDraft, fetchResumeFormats, ResumeDraftSummary, ResumeFormat } from "@/lib/resumes";
+import { UserCircle2, FolderOpen, FileText, Trash2, Sparkles, ExternalLink, Download, Files } from "lucide-react";
 
 export default function ResumeBuilderEntryPage() {
   const router = useRouter();
@@ -13,11 +13,19 @@ export default function ResumeBuilderEntryPage() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
 
+  const [formats, setFormats] = useState<ResumeFormat[]>([]);
+  const [formatsLoading, setFormatsLoading] = useState(true);
+
   useEffect(() => {
     fetchResumeDrafts()
       .then(setDrafts)
       .catch(() => setError("Could not load your saved resumes."))
       .finally(() => setLoading(false));
+
+    fetchResumeFormats()
+      .then(setFormats)
+      .catch(() => {}) // non-fatal — the rest of the page still works fine without formats
+      .finally(() => setFormatsLoading(false));
   }, []);
 
   async function handleBuildFromProfile() {
@@ -100,6 +108,41 @@ export default function ResumeBuilderEntryPage() {
         </div>
       )}
 
+      {!formatsLoading && formats.length > 0 && (
+        <Card className="mb-6">
+          <div className="flex items-center gap-2.5 mb-1">
+            <Files size={16} className="text-primary" />
+            <h3 className="text-sm font-bold">Sample Formats from the T&P Cell</h3>
+          </div>
+          <p className="text-[12px] text-muted mb-4">
+            Real examples uploaded by your Placement Manager — open one for reference while filling in the builder above.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {formats.map((f) => (
+              
+                key={f.id}
+                href={f.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 border border-border rounded-[10px] p-3 hover:border-primary hover:bg-primary-50 transition-colors"
+              >
+                <div className="w-9 h-9 rounded-lg bg-surface-2 text-muted grid place-items-center flex-shrink-0">
+                  <FileText size={16} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="text-[12.5px] font-semibold truncate">{f.name}</h4>
+                    {f.style_tag && <span className="text-[10px] bg-primary-50 text-primary px-1.5 py-0.5 rounded-full flex-shrink-0">{f.style_tag}</span>}
+                  </div>
+                  {f.description && <p className="text-[11px] text-muted truncate">{f.description}</p>}
+                </div>
+                <Download size={14} className="text-muted flex-shrink-0" />
+              </a>
+            ))}
+          </div>
+        </Card>
+      )}
+
       <Card className="flex items-center gap-4 border-amber-200 bg-warning-50">
         <div className="w-11 h-11 rounded-[10px] bg-white text-warning grid place-items-center flex-shrink-0">
           <Sparkles size={20} />
@@ -108,7 +151,7 @@ export default function ResumeBuilderEntryPage() {
           <h4 className="text-sm font-bold text-[#92400E]">Want more templates or AI suggestions?</h4>
           <p className="text-[12.5px] text-[#92400E]/80">Try Rezi — a free AI resume builder with ATS scoring. Opens in a new tab.</p>
         </div>
-        <a
+        
           href="https://www.rezi.ai/"
           target="_blank"
           rel="noopener noreferrer"
