@@ -24,7 +24,7 @@ export default function ResumeBuilderEntryPage() {
 
     fetchResumeFormats()
       .then(setFormats)
-      .catch(() => {}) // non-fatal — the rest of the page still works fine without formats
+      .catch(() => {})
       .finally(() => setFormatsLoading(false));
   }, []);
 
@@ -119,7 +119,7 @@ export default function ResumeBuilderEntryPage() {
           </p>
           <div className="grid grid-cols-2 gap-3">
             {formats.map((f) => (
-              
+              <a
                 key={f.id}
                 href={f.file}
                 target="_blank"
@@ -142,7 +142,6 @@ export default function ResumeBuilderEntryPage() {
           </div>
         </Card>
       )}
-
       <Card className="flex items-center gap-4 border-amber-200 bg-warning-50">
         <div className="w-11 h-11 rounded-[10px] bg-white text-warning grid place-items-center flex-shrink-0">
           <Sparkles size={20} />
@@ -151,7 +150,7 @@ export default function ResumeBuilderEntryPage() {
           <h4 className="text-sm font-bold text-[#92400E]">Want more templates or AI suggestions?</h4>
           <p className="text-[12.5px] text-[#92400E]/80">Try Rezi — a free AI resume builder with ATS scoring. Opens in a new tab.</p>
         </div>
-        
+        <a
           href="https://www.rezi.ai/"
           target="_blank"
           rel="noopener noreferrer"

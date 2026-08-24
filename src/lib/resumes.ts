@@ -103,8 +103,10 @@ export function deleteResumeDraft(id: string): Promise<void> {
   return api(`/api/students/resumes/${id}/`, { method: "DELETE" }) as Promise<void>;
 }
 
-// PDF/DOCX exports return raw files, not JSON — fetched with the auth header
-// attached manually and streamed to the browser as a download.
+export function fetchResumeFormats(): Promise<ResumeFormat[]> {
+  return api<ResumeFormat[]>("/api/resume-formats/");
+}
+
 async function downloadResumeFile(url: string, filename: string) {
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}${url}`, {
@@ -118,10 +120,6 @@ async function downloadResumeFile(url: string, filename: string) {
   link.download = filename;
   link.click();
   URL.revokeObjectURL(objectUrl);
-}
-
-export function fetchResumeFormats(): Promise<ResumeFormat[]> {
-  return api<ResumeFormat[]>("/api/resume-formats/");
 }
 
 export function downloadResumePDF(id: string, name: string) {
